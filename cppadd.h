@@ -364,7 +364,7 @@ typedef enum {
 /**********************************************************************
  * PROTOTYPES:
  *********************************************************************/
-int PREFIX fppPreProcess(REG(a0) struct fppTag *);
+int  fppPreProcess(struct fppTag *);
 void Freemem(void *);
 void Error(struct Global *, char *, ...);
 void Putchar(struct Global *, int);

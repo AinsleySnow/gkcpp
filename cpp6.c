@@ -24,8 +24,8 @@ SOFTWARE.
 #include "cppdef.h"
 #include "cpp.h"
 
-INLINE FILE_LOCAL void outadefine(struct Global *, DEFBUF *);
-INLINE FILE_LOCAL void domsg(struct Global *, ErrorCode, va_list);
+inline FILE_LOCAL void outadefine(struct Global *, DEFBUF *);
+inline FILE_LOCAL void domsg(struct Global *, ErrorCode, va_list);
 FILE_LOCAL char *incmem(struct Global *, char *, int);
 
 /*
@@ -633,7 +633,7 @@ void outdefines(struct Global *global)
   }
 }
 
-INLINE FILE_LOCAL
+inline FILE_LOCAL
 void outadefine(struct Global *global, DEFBUF *dp)
 {
   char *cp;
@@ -982,7 +982,7 @@ int cget(struct Global *global)
  * Error messages and other hacks.
  */
 
-INLINE FILE_LOCAL
+inline FILE_LOCAL
 void domsg(struct Global *global,
   ErrorCode error,  /* error message number */
   va_list arg)      /* Something for the message    */
@@ -1086,13 +1086,9 @@ void domsg(struct Global *global,
         MSG_PREFIX, tp, global->infile->fp?global->line:file->line, severity);
   if(global->error)
     global->error(global->userdata, ErrorMessage[error], arg);
-#if defined(UNIX)
   else
     vfprintf(stderr, ErrorMessage[error], arg);
-#elif defined(AMIGA)
-  else
-    return;
-#endif
+
   Error(global, "\n");
 
   if (file)   /*OIS*0.92*/
@@ -1134,8 +1130,6 @@ void Error(struct Global *global, char *format, ...)
   va_start(arg, format);
   if(global->error)
     global->error(global->userdata, format, arg);
-#if defined(UNIX)
   else
     vfprintf(stderr, format, arg);
-#endif
 }

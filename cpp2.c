@@ -24,14 +24,10 @@ SOFTWARE.
 #include    "cppdef.h"
 #include    "cpp.h"
 
-#ifdef _AMIGA
-#include <proto/dos.h>
-#endif
-
 FILE_LOCAL void dump_line(struct Global *, int *);
 FILE_LOCAL ReturnCode doif(struct Global *, int);
-INLINE FILE_LOCAL ReturnCode doinclude(struct Global *);
-INLINE FILE_LOCAL int hasdirectory(char *, char *);
+inline FILE_LOCAL ReturnCode doinclude(struct Global *);
+inline FILE_LOCAL int hasdirectory(char *, char *);
 
 
 /*
@@ -532,7 +528,7 @@ ReturnCode doif(struct Global *global, int hash)
     return(FPP_OK);
 }
 
-INLINE FILE_LOCAL
+inline FILE_LOCAL
 ReturnCode doinclude( struct Global *global )
 {
     /*
@@ -609,10 +605,6 @@ ReturnCode doinclude( struct Global *global )
     return( FPP_OK );
 }
 
-#ifdef _AMIGA
-ReturnCode MultiAssignLoad( struct Global *global, char *incptr, char *filename, char *tmpname );
-#endif
-
 ReturnCode openinclude( struct Global *global,
     char *filename,     /* Input file name         */
     int searchlocal )   /* TRUE if #include "file" */
@@ -630,19 +622,12 @@ ReturnCode openinclude( struct Global *global,
     int len;
     ReturnCode ret;
 
-    #if HOST == SYS_AMIGADOS
-    if( strchr (filename, ':') != NULL )
-        {
-        if( ! openfile( global, filename ) )
-            return(FPP_OK);
-        }
-    #else
+
     if( filename[0] == '/' )
         {
         if( ! openfile( global, filename ) )
             return(FPP_OK);
         }
-    #endif
 
     if( searchlocal )
         {
@@ -679,30 +664,11 @@ ReturnCode openinclude( struct Global *global,
             }
         else
             {
-            #if HOST == SYS_AMIGADOS
-            if( (*incptr)[len-1] != '/' && (*incptr)[len-1] != ':' )
-	            sprintf( tmpname, "%s/%s", *incptr, filename );
-            #else
             if( (*incptr)[len-1] != '/' )
                 sprintf( tmpname, "%s/%s", *incptr, filename );
-            #endif
             else
                 sprintf( tmpname, "%s%s", *incptr, filename );
-
-            #if HOST == SYS_AMIGADOS
-            //
-            //  amp July 9, 1997
-            //
-            //  OK, hack in multiassign support for the buitin
-            //  search directories...
-            //
-            if( (*incptr)[len-1] == ':' )
-                {
-                if( ! MultiAssignLoad( global, *incptr, filename, tmpname ) )
-                    return(FPP_OK);
-                }
-            else
-            #endif
+    
             if( !openfile( global, tmpname ) )
                 return(FPP_OK);
             }
@@ -711,7 +677,7 @@ ReturnCode openinclude( struct Global *global,
     return( FPP_NO_INCLUDE );
 }
 
-INLINE FILE_LOCAL
+inline FILE_LOCAL
 int hasdirectory( char *source,   /* Directory to examine         */
     char *result )  /* Put directory stuff here     */
 {
@@ -723,22 +689,8 @@ int hasdirectory( char *source,   /* Directory to examine         */
 
     char *tp2;
 
-    #if HOST == SYS_AMIGADOS
-    char *tp1;
-
-    if( (tp1 = strrchr( source, ':' ) ) == NULL )
-        tp1 = source;
-
-    if( (tp2 = strrchr( tp1, '/' ) ) == NULL )
-        tp2 = tp1;
-
-    if( tp2 == source )
-        return (FALSE);
-
-    #else
     if( (tp2 = strrchr( source, '/' ) ) == NULL )
         return(FALSE);
-    #endif
 
     strncpy( result, source, tp2 - source + 1 );
 
@@ -746,70 +698,3 @@ int hasdirectory( char *source,   /* Directory to examine         */
 
     return( TRUE );
 }
-
-#ifdef _AMIGA
-//
-//  amp July 9, 1997
-//
-//  Use the OS Luke...
-//
-//  We do the sneaky version and let the OS do all
-//  the hard work so we don't have to mess around
-//  a lot ;)
-//
-ReturnCode MultiAssignLoad( struct Global *global, char *incptr, char *filename, char *tmpname )
-
-{ /* MultiAssignLoad */
-
-    struct MsgPort  *FSTask;
-    struct DevProc  *DevProc = NULL;
-    LONG            RtnCode = FPP_NO_INCLUDE;
-
-    FSTask = GetFileSysTask();
-
-    do
-        {
-        //
-        //  This should not bring up a requester.
-        //  check to see if cpp does in fact tweek
-        //  the process WindowPtr.
-        //
-        DevProc = GetDeviceProc( incptr, DevProc );
-
-        if( DevProc )
-            {
-            SetFileSysTask( DevProc->dvp_Port );
-
-            //
-            //  Normally we would pass the lock and filename
-            //  to the Load() routine, which would CD to the
-            //  directory and Open(filename), but in order to
-            //  satisfy the exisiting openfile() function, we
-            //  bite the bullet and build the complete pathspec
-            //  rather than add the standard Load() routine.
-            //
-            if( NameFromLock( DevProc->dvp_Lock, tmpname, NWORK ) )
-                {
-                AddPart( tmpname, filename, NWORK );
-
-                RtnCode = openfile( global, tmpname );
-
-                if( ! RtnCode )
-                    break;
-                }
-            }
-
-        } while ( RtnCode &&
-            DevProc &&
-            (DevProc->dvp_Flags & DVPF_ASSIGN) &&
-            IoErr() == ERROR_OBJECT_NOT_FOUND); /* repeat if multi-assign */
-
-    SetFileSysTask( FSTask );
-
-    if( DevProc )
-        FreeDeviceProc( DevProc );
-
-    return RtnCode;
-
-} /* MultiAssignLoad */
-#endif  //_AMIGA

@@ -26,36 +26,10 @@
  *
  *
  *****************************************************************************/
-#ifdef EMACS
 
-/* Use the Emacs config file to find out what type of machine */
+// there used to be some lines of code of using Emacs defination
+// to find machine type, but I don't think we need that anymore
 
-#define NO_SHORTNAMES
-
-/* Convert Emacs's conventions for BIG_ENDIAN to cpp's convention.  */
-#ifdef BIG_ENDIAN
-#undef BIG_ENDIAN
-#define BIG_ENDIAN TRUE
-#else /* not BIG_ENDIAN */
-#define BIG_ENDIAN FALSE
-#endif /* BIG_ENDIAN */
-
-/* Emacs uses the names index and rindex and defines them as str(r)chr if nec;
-   cpp uses the opposite convention.  Here we flush the macro definitions for
-   Emacs and add the ones cpp wants.  */
-
-#ifdef index
-#undef index
-#undef rindex
-#else /* index is not defined as a macro */
-#define strchr index
-#define strrchr rindex
-#endif /* index is not defined as a macro */
-
-#define NBUFF 2048
-#define NWORK 2048
-
-#endif /* EMACS */
 
 /*
  *		   S y s t e m	 D e p e n d e n t
@@ -68,49 +42,26 @@
  * with arguments.  If this is not the case (as for Decus C), #define
  * nomacarg -- and provide function equivalents for all macros.
  *
+ * (Is there any C compiler that doesn't support macros with arguments?)
+ * （Alas. Tears of the era.)
+ * 
  * cpp also assumes the host and target implement the Ascii character set.
  * If this is not the case, you will have to do some editing here and there.
+ * 
+ * (...Or any host or target that totally ignores ASCII?)
+ * (Tears again.)
+ * 
  */
 
-/*
- * This redundant definition of TRUE and FALSE works around
- * a limitation of Decus C.
- */
-#ifndef TRUE
-#define TRUE			1
-#define FALSE			0
-#endif
+ // no longer needed to define TRUE and FALSE
+ // manually, since we have stdbool.h, and in the
+ // newest C23 standard we have the keywords true and false.
 
 /*
  * Define the HOST operating system.  This is needed so that
  * cpp can use appropriate filename conventions.
  */
-#define SYS_UNKNOWN		0
-#define SYS_UNIX		1
-#define SYS_VMS 		2
-#define SYS_RSX 		3
-#define SYS_RT11		4
-#define SYS_LATTICE		5
-#define SYS_ONYX		6
-#define SYS_68000		7
-#define SYS_AMIGADOS		8
 
-#ifndef HOST
-#ifdef	unix
-#define HOST			SYS_UNIX
-#else
-#ifdef	amiga
-#define HOST			SYS_AMIGADOS
-#endif
-#endif
-#endif
-
-/*
- * We assume that the target is the same as the host system
- */
-#ifndef TARGET
-#define TARGET			HOST
-#endif
 
 /*
  * In order to predefine machine-dependent constants,
@@ -168,9 +119,6 @@
  *		which is to be searched *before* the operating-system
  *		specific directories.
  */
-
-#define MACHINE 		"amiga", "m68000"
-#define SYSTEM			"amigados"
 
 
 /*
@@ -352,24 +300,6 @@
 #define FILE_LOCAL		static		/* file-unique globals */
 #endif
 
-/*
- * For compilers supporting inlining, the INLINE macro has been added to
- * functions called from only one place. There might still be some
- * functions that should have this macro.
- */
-#ifdef AMIGA
-#define INLINE __inline /* Amiga compiler SAS/C 6.x supports this! */
-#else
-#define INLINE /* don't support that kind of stuff */
-#endif
-
-#if defined(AMIGA) && defined(SHARED)
-#define PREFIX __asm __saveds
-#define REG(x) register __ ## x
-#else
-#define PREFIX
-#define REG(x)
-#endif
 
 /*
  * SBSIZE defines the number of hash-table slots for the symbol table.
@@ -378,6 +308,9 @@
 #define SBSIZE  64
 #endif
 
-#define VERSION_TEXT "Frexx C Preprocessor v1.5.1 " \
-"Copyright (C) by FrexxWare 1993 - 2002.\n" \
+#define VERSION_TEXT                               \
+"Ginkgo C Preprocessor v0.0.1 "                    \
+"Copyright (C) by AinsleySnow 2023 - present\n"    \
+"based on Frexx C Preprocessor v1.5.1\n"           \
+"Copyright (C) by FrexxWare 1993 - 2002.\n"        \
 "Compiled " __DATE__ "\n"

@@ -232,11 +232,6 @@ typedef struct sizes {
 #include "fpp.h"    /* structs and defines */
 #include "cppadd.h" /* Added prototypes for ANSI complience! */
 
-#ifdef AMIGA
-#include <dos.h>
-extern int _OSERR;
-#endif
-
 extern char	type[]; 		/* Character classifier 	*/
 
 #define compiling global->ifstack[0]

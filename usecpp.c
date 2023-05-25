@@ -64,69 +64,25 @@ SOFTWARE.
  */
 
 #include <stdlib.h>
-
-#ifdef AMIGA
-#include <proto/exec.h>
-#include <exec/types.h>
-
-#if defined(SHARED)
-#include <exec/libraries.h>
-#include <libraries/dos.h>
-
-#include "fpp_pragmas.h"
-#include "fpp_protos.h"
-#include "FPPBase.h"
-struct Library *FPPBase=NULL;
-#define PREFIX __saveds
-#define REG(x) register __ ## x
-#else
-#define PREFIX
-#define REG(x)
-#endif
-
-#elif defined(UNIX)
-#if defined(OS9)
-#include <types.h>
-#else
-#include <sys/types.h>
-#ifdef BSD
-#include <sys/unistd.h> /* for BSD systems (SUN OS at least) */
-#endif
-#endif
-#define PREFIX
-#define REG(x)
-#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#ifndef OS9
 #include <stdarg.h>
-#else
-#define va_list void *
-#endif
 
 #include "fpp.h"
 #define MAX_TAGS 40 /* maximum number of tags allowed! */
 #define FILE_LOCAL static
 
 #define CPP_PREFS_FILE "cpp.prefs"
-#ifdef AMIGA
-#define DEFAULT_CPP_PREFS_FILE "s:cpp.prefs"
-#else
 #define DEFAULT_CPP_PREFS_FILE "$HOME/cpp.prefs"
-#endif
 
-FILE_LOCAL char PREFIX *own_input(char *, int, void *);
-FILE_LOCAL void PREFIX own_output(int, void *);
-FILE_LOCAL void PREFIX own_error(void *, char *, va_list);
+FILE_LOCAL char *own_input(char *, int, void *);
+FILE_LOCAL void own_output(int, void *);
+FILE_LOCAL void own_error(void *, char *, va_list);
 FILE_LOCAL int SetOptions(int, char **, struct fppTag **);
 FILE_LOCAL char GetPrefs(struct fppTag **, char **);
 FILE_LOCAL char DoString(struct fppTag **, char *);
-
-#ifdef AMIGA
-extern long __stack=8000;
-#endif
 
 FILE_LOCAL char ignore=FALSE;  /* if we should ignore strange flags! */
 FILE_LOCAL char display=FALSE; /* display all options in use! */
@@ -148,13 +104,7 @@ int main(int argc, char **argv)
    */  
 
   tagptr->tag=FPPTAG_INCLUDE_DIR;
-#if defined (AMIGA)
-  tagptr->data = "INCLUDE:";
-#elif defined (OS9)
-  tagptr->data = "/dd/defs/";
-#else
   tagptr->data = "/usr/include/";
-#endif
   tagptr++;
 
   if(GetPrefs(&tagptr, &dealloc))
@@ -228,17 +178,8 @@ int main(int argc, char **argv)
   tagptr->data=0;
   tagptr++;
 
-#if defined(SHARED) && defined(AMIGA)
-  if(!(FPPBase=OpenLibrary(FPPNAME, 1))) {
-    printf("Error opening %s!\n", FPPNAME);
-    return(-1);
-  }
-#endif
   fppPreProcess(tags);
 
-#if defined(SHARED) && defined(AMIGA)
-  CloseLibrary((struct Library *)FPPBase);
-#endif
   /*
    * Preprocess ready!
    */
@@ -251,19 +192,19 @@ int main(int argc, char **argv)
 
 
 FILE_LOCAL
-char PREFIX *own_input(char *buffer, int size, void *userdata)
+char  *own_input(char *buffer, int size, void *userdata)
 {
   return(fgets(buffer, size, stdin));
 }
 
 FILE_LOCAL
-void PREFIX own_output(int c, void *userdata)
+void  own_output(int c, void *userdata)
 {
   putchar(c);
 }
 
 FILE_LOCAL
-void PREFIX own_error(void *userdata, char *format, va_list arg)
+void  own_error(void *userdata, char *format, va_list arg)
 {
   vfprintf(stderr, format, arg);
 }

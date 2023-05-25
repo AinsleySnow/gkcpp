@@ -156,4 +156,4 @@ struct fppTag {
 /* Switch on WWW-mode */
 #define FPPTAG_WEBMODE 33
 
-int PREFIX fppPreProcess(REG(a0) struct fppTag *);
+int fppPreProcess(struct fppTag *);
