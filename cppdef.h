@@ -53,7 +53,7 @@
  * 
  */
 
- // no longer needed to define TRUE and FALSE
+ // no longer needed to define true and false
  // manually, since we have stdbool.h, and in the
  // newest C23 standard we have the keywords true and false.
 
@@ -85,27 +85,27 @@
  *		to be marked "static" even though they are referenced
  *		by "extern" statements elsewhere.
  *
- * OK_DOLLAR	Should be set TRUE if $ is a valid alphabetic character
+ * OK_DOLLAR	Should be set true if $ is a valid alphabetic character
  *		in identifiers (default), or zero if $ is invalid.
- *		Default is TRUE.
+ *		Default is true.
  *
- * OK_CONCAT	Should be set TRUE if # may be used to concatenate
+ * OK_CONCAT	Should be set true if # may be used to concatenate
  *		tokens in macros (per the Ansi Draft Standard) or
- *		FALSE for old-style # processing (needed if cpp is
+ *		false for old-style # processing (needed if cpp is
  *		to process assembler source code).
  */
-#define OK_CONCAT TRUE
+#define OK_CONCAT true
 /*
- * OK_DATE	Predefines the compilation date if set TRUE.
+ * OK_DATE	Predefines the compilation date if set true.
  *		Not permitted by the Nov. 12, 1984 Draft Standard.
  */
-#define OK_DATE TRUE
+#define OK_DATE true
 /*
  *
  * OK_SIZEOF	Permits sizeof in #if preprocessor expressions.
  *		According to K&R V2 (page 232), this is not allowed.
  */
-#define OK_SIZEOF TRUE
+#define OK_SIZEOF true
 /*
  * S_CHAR etc.	Define the sizeof the basic TARGET machine word types.
  *		By default, sizes are set to the values for the HOST
@@ -130,18 +130,6 @@
 #endif
 
 /*
- * OLD_PREPROCESSOR forces the definition of OK_DOLLAR, OK_CONCAT,
- * COMMENT_INVISIBLE to values appropriate for
- * an old-style preprocessor.
- */
-
-#if	OLD_PREPROCESSOR
-#define OK_DOLLAR		FALSE
-#define OK_CONCAT		FALSE
-#define COMMENT_INVISIBLE	TRUE
-#endif
-
-/*
  * RECURSION_LIMIT may be set to -1 to disable the macro recursion test.
  */
 #ifndef RECURSION_LIMIT
@@ -157,15 +145,15 @@
 #endif
 
 /*
- * BIG_ENDIAN is set TRUE on machines (such as the IBM 360 series)
+ * BIG_ENDIAN is set true on machines (such as the IBM 360 series)
  * where 'ab' stores 'a' in the high-bits and 'b' in the low-bits.
- * It is set FALSE on machines (such as the PDP-11 and Vax-11)
+ * It is set false on machines (such as the PDP-11 and Vax-11)
  * where 'ab' stores 'a' in the low-bits and 'b' in the high-bits.
  * (Or is it the other way around?) -- Warning: BIG_ENDIAN code is untested.
  * [I *seems* to be the other way around, according to the code /OIS]
  */
 #ifndef BIG_ENDIAN
-#define BIG_ENDIAN		FALSE
+#define BIG_ENDIAN		false
 #endif
 
 /*
@@ -175,27 +163,27 @@
  * expansions.	This was removed from the Draft Ansi Standard.
  */
 #ifndef COMMENT_INVISIBLE
-#define COMMENT_INVISIBLE	FALSE
+#define COMMENT_INVISIBLE	false
 #endif
 
 /*
  * OK_DOLLAR enables use of $ as a valid "letter" in identifiers.
  * This is a permitted extension to the Ansi Standard and is required
- * for e.g., VMS, RSX-11M, etc.   It should be set FALSE if cpp is
+ * for e.g., VMS, RSX-11M, etc.   It should be set false if cpp is
  * used to preprocess assembler source on Unix systems.  OLD_PREPROCESSOR
- * sets OK_DOLLAR FALSE for that reason.
+ * sets OK_DOLLAR false for that reason.
  */
 #ifndef OK_DOLLAR
-#define OK_DOLLAR		TRUE
+#define OK_DOLLAR		true
 #endif
 
 /*
  * OK_CONCAT enables (one possible implementation of) token concatenation.
  * If cpp is used to preprocess Unix assembler source, this should be
- * set FALSE as the concatenation character, #, is used by the assembler.
+ * set false as the concatenation character, #, is used by the assembler.
  */
 #ifndef OK_CONCAT
-#define OK_CONCAT		TRUE
+#define OK_CONCAT		true
 #endif
 
 /*
@@ -204,7 +192,7 @@
  * by the Draft Ansi Standard.
  */
 #ifndef OK_DATE
-#define OK_DATE 	TRUE
+#define OK_DATE 	true
 #endif
 
 /*
@@ -215,7 +203,7 @@
  * This option was added in the PDC process, under no. *OIS*0.92*.
  */
 #ifndef OK_SIZEOF
-#define OK_SIZEOF	FALSE
+#define OK_SIZEOF	false
 #endif
 
 /*
@@ -223,7 +211,7 @@
  */
 
 #ifndef DEBUG
-#define DEBUG		FALSE
+#define DEBUG		false
 #endif
 
 /*

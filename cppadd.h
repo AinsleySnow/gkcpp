@@ -38,7 +38,8 @@
  *******/
 
 #include <stdarg.h>
-#include "memory.h"
+#include <stdbool.h>
+#include <memory.h>
 
 struct Global {
 
@@ -67,7 +68,7 @@ struct Global {
   int           errors;                 /* cpp error counter            */
   FILEINFO      *infile;                /* Current input file           */
 #if DEBUG
-  int           debug;                  /* TRUE if debugging now        */
+  int           debug;                  /* true if debugging now        */
 #endif
   /*
    * This counter is incremented when a macro expansion is initiated.
@@ -83,7 +84,7 @@ struct Global {
   int           rec_recover;            /* Unwind recursive macros      */
 
   /*
-   * instring is set TRUE when a string is scanned.  It modifies the
+   * instring is set true when a string is scanned.  It modifies the
    * behavior of the "get next character" routine, causing all characters
    * to be passed to the caller (except <DEF_MAGIC>).  Note especially that
    * comments and \<newline> are not removed from the source.  (This
@@ -98,8 +99,8 @@ struct Global {
    * instring and inmarcor are parameters to the get() routine which
    * were made global for speed.
    */
-  int           instring;       /* TRUE if scanning string      */
-  int           inmacro;        /* TRUE if #defining a macro    */
+  bool           instring;       /* true if scanning string      */
+  bool           inmacro;        /* true if #defining a macro    */
   
   /*
    * work[] and workp are used to store one piece of text in a temporay
@@ -114,7 +115,7 @@ struct Global {
   char          *workp;                 /* Work buffer pointer          */
 
   /*
-   * keepcomments is set TRUE by the -C option.  If TRUE, comments
+   * keepcomments is set true by the -C option.  If true, comments
    * are written directly to the output stream.  This is needed if
    * the output from cpp is to be passed to lint (which uses commands
    * embedded in comments).  cflag contains the permanent state of the
@@ -128,20 +129,20 @@ struct Global {
    * __FILE__, and __DATE__.  If nflag > 1, absolutely no symbols
    * are predefined.
    */
-  char          keepcomments;   /* Write out comments flag      */
-  char          cflag;          /* -C option (keep comments)    */
-  char          eflag;          /* -E option (never fail)       */
-  char          nflag;          /* -N option (no predefines)    */
-  char          wflag;          /* -W option (write #defines)   */
+  bool          keepcomments;   /* Write out comments flag      */
+  bool          cflag;          /* -C option (keep comments)    */
+  bool          eflag;          /* -E option (never fail)       */
+  bool          nflag;          /* -N option (no predefines)    */
+  bool          wflag;          /* -W option (write #defines)   */
 
   /*
    * ifstack[] holds information about nested #if's.  It is always
    * accessed via *ifptr.  The information is as follows:
    *    WAS_COMPILING   state of compiling flag at outer level.
-   *    ELSE_SEEN       set TRUE when #else seen to prevent 2nd #else.
-   *    TRUE_SEEN       set TRUE when #if or #elif succeeds
-   * ifstack[0] holds the compiling flag.  It is TRUE if compilation
-   * is currently enabled.  Note that this must be initialized TRUE.
+   *    ELSE_SEEN       set true when #else seen to prevent 2nd #else.
+   *    TRUE_SEEN       set true when #if or #elif succeeds
+   * ifstack[0] holds the compiling flag.  It is true if compilation
+   * is currently enabled.  Note that this must be initialized true.
    */
   char          ifstack[BLK_NEST];      /* #if information      */
   char          *ifptr;                 /* -> current ifstack[] */
@@ -176,7 +177,7 @@ struct Global {
 
   /*
    * This is the variable saying if Cpp should remove C++ style comments from
-   * the output. Default is... TRUE, yes, pronto, do it!!!
+   * the output. Default is... true, yes, pronto, do it!!!
    */
   
   char cplusplus;
@@ -223,7 +224,7 @@ struct Global {
 
   char showspace;   /* display all whitespaces as they are */
 
-  char comment;     /* TRUE if a comment just has been written to output */
+  char comment;     /* true if a comment just has been written to output */
 
   char *spacebuf;    /* Buffer to store whitespaces in if -H */
 
@@ -240,7 +241,7 @@ struct Global {
   char out; /* should we output anything now? */
 
   char rightconcat; /* should the right part of a concatenation be avaluated
-					   before the concat (TRUE) or after (FALSE) */
+					   before the concat (true) or after (false) */
   char *initialfunc; /* file to include first in all functions */
 
   char *excludedinit[20]; /* functions (names) excluded from the initfunc */

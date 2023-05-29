@@ -92,7 +92,7 @@ static char opdope[OP_MAX] = {
 typedef struct optab {
   char	op;			/* Operator			*/
   char	prec;			/* Its precedence		*/
-  char	skip;			/* Short-circuit: TRUE to skip	*/
+  char	skip;			/* Short-circuit: true to skip	*/
 } OPTAB;
      
 #ifdef	nomacargs
@@ -227,7 +227,7 @@ ReturnCode eval(struct Global *global, int *eval)
    * evaleval	Evaluate the current operator, given the values on
    *		the value stack.  Returns a pointer to the (new)
    *		value stack.
-   * For compatiblity with older cpp's, this return returns 1 (TRUE)
+   * For compatiblity with older cpp's, this return returns 1 (true)
    * if a syntax error is detected.
    */
   int op;		/* Current operator		*/
@@ -240,7 +240,7 @@ ReturnCode eval(struct Global *global, int *eval)
   int value[NEXP];	/* Value stack			*/
   OPTAB opstack[NEXP];	/* Operand stack		*/
   ReturnCode ret;
-  char again=TRUE;
+  char again=true;
   
   valp = value;
   opp = opstack;
@@ -274,7 +274,7 @@ ReturnCode eval(struct Global *global, int *eval)
 	*valp++ = global->evalue;
 	binop = 1;
       }
-      again=TRUE;
+      again=true;
       continue;
     } else if (op > OP_END) {
       cerror(global, ERROR_ILLEGAL_IF_LINE);
@@ -323,7 +323,7 @@ ReturnCode eval(struct Global *global, int *eval)
 	else {				/* Other ops leave	*/
 	  opp->skip = op1;		/*  skipping unchanged. */
 	}
-	again=TRUE;
+	again=true;
 	continue;
       }
       /*
@@ -338,7 +338,7 @@ ReturnCode eval(struct Global *global, int *eval)
 	  return(FPP_OK);
 	}
 	/* Read another op.	*/
-	again=TRUE;
+	again=true;
 	continue;
       case OP_LPA:			/* ( on stack           */
 	if (op != OP_RPA) {             /* Matches ) on input   */
@@ -350,7 +350,7 @@ ReturnCode eval(struct Global *global, int *eval)
 	/* -- Fall through 	*/
       case OP_QUE:
 	/* Evaluate true expr.	*/
-	again=TRUE;
+	again=true;
 	continue;
       case OP_COL:			/* : on stack.		*/
 	opp--;				/* Unstack :		*/
@@ -365,7 +365,7 @@ ReturnCode eval(struct Global *global, int *eval)
       default:				/* Others:		*/
 	opp--;				/* Unstack the operator */
 	valp = evaleval(global, valp, op1, skip);
-	again=FALSE;
+	again=false;
       }					/* op1 switch end	*/
     } while (!again);			/* Stack unwind loop	*/
   }
@@ -374,7 +374,7 @@ ReturnCode eval(struct Global *global, int *eval)
 
 FILE_LOCAL
 ReturnCode evallex(struct Global *global,
-		   int skip,	/* TRUE if short-circuit evaluation */
+		   int skip,	/* true if short-circuit evaluation */
 		   int *op)
 {
   /*
@@ -391,7 +391,7 @@ ReturnCode evallex(struct Global *global,
   
   do { /* while(loop); */
   /* again: */
-    loop=FALSE;
+    loop=false;
     do {					/* Collect the token	*/
       c = skipws(global);
       if(ret=macroid(global, &c))
@@ -493,7 +493,7 @@ else if (streq(global->tokenbuf, "sizeof")) { /* New sizeof hackery   */
       
       case '\\':
 	if (c1 == '\n') {                  /* Multi-line if        */
-	  loop=TRUE;
+	  loop=true;
 	  break;
 	}
 	cerror(global, ERROR_ILLEGAL_BACKSLASH);
@@ -635,7 +635,7 @@ inline FILE_LOCAL
 int bittest(int value)
 {
   /*
-   * TRUE if value is zero or exactly one bit is set in value.
+   * true if value is zero or exactly one bit is set in value.
    */
 
 #if (4096 & ~(-4096)) == 0
@@ -691,7 +691,7 @@ int evalnum(struct Global *global, int c)
 
 FILE_LOCAL
 int evalchar(struct Global *global,
-	     int skip)		/* TRUE if short-circuit evaluation	*/
+	     int skip)		/* true if short-circuit evaluation	*/
      /*
       * Get a character constant
       */
@@ -700,7 +700,7 @@ int evalchar(struct Global *global,
   int value;
   int count;
   
-  global->instring = TRUE;
+  global->instring = true;
   if ((c = cget(global)) == '\\') {
     switch ((c = cget(global))) {
     case 'a':                           /* New in Standard      */
@@ -787,7 +787,7 @@ int evalchar(struct Global *global,
     value += c;
 #endif
   }
-  global->instring = FALSE;
+  global->instring = false;
   return (value);
 }
 
@@ -795,7 +795,7 @@ FILE_LOCAL
 int *evaleval(struct Global *global,
 	      int *valp,
 	      int op,
-	      int skip)		/* TRUE if short-circuit evaluation	*/
+	      int skip)		/* true if short-circuit evaluation	*/
 {
   /*
    * Apply the argument operator to the data on the value stack.

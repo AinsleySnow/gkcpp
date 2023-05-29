@@ -239,7 +239,7 @@ ReturnCode control( struct Global *global,
                 global->infile->progname = savestring( global, tp );
                 }
 
-            global->wrongline = TRUE;           /* Force output later   */
+            global->wrongline = true;           /* Force output later   */
             break;
 
         case L_include:
@@ -281,10 +281,10 @@ ReturnCode control( struct Global *global,
             if( (*global->ifptr & WAS_COMPILING) != 0 )
                 {
                 if( compiling || (*global->ifptr & TRUE_SEEN) != 0 )
-                    compiling = FALSE;
+                    compiling = false;
                 else
                     {
-                    compiling = TRUE;
+                    compiling = true;
                     }
                 }
             break;
@@ -309,7 +309,7 @@ ReturnCode control( struct Global *global,
 
             if( (*global->ifptr & (WAS_COMPILING | TRUE_SEEN)) != WAS_COMPILING )
                 {
-                compiling = FALSE;        /* Done compiling stuff */
+                compiling = false;        /* Done compiling stuff */
 
                 dump_line( global, counter );   /* Skip this clause */
 
@@ -357,7 +357,7 @@ ReturnCode control( struct Global *global,
                 }
 
             if( !compiling && (*global->ifptr & WAS_COMPILING) != 0 )
-                global->wrongline = TRUE;
+                global->wrongline = true;
 
             compiling = ((*global->ifptr & WAS_COMPILING) != 0);
 
@@ -421,23 +421,12 @@ ReturnCode control( struct Global *global,
 
     if( hash != L_include )
         {
-        #if OLD_PREPROCESSOR
-        /*
-         * Ignore the rest of the #control line so you can write
-         *      #if foo
-         *      #endif  foo
-         */
-        dump_line( global, counter );         /* Take common exit */
-
-        return( FPP_OK );
-        #else
         if( skipws( global ) != '\n' )
             {
             cwarn( global, WARN_UNEXPECTED_TEXT_IGNORED );
 
             skipnl( global );
             }
-        #endif
         }
 
     (*counter)++;
@@ -460,7 +449,7 @@ ReturnCode doif(struct Global *global, int hash)
      * Process an #if, #ifdef, or #ifndef. The latter two are straightforward,
      * while #if needs a subroutine of its own to evaluate the expression.
      *
-     * doif() is called only if compiling is TRUE.  If false, compilation
+     * doif() is called only if compiling is true.  If false, compilation
      * is always supressed, so we don't need to evaluate anything.  This
      * supresses unnecessary warnings.
      */
@@ -475,11 +464,9 @@ ReturnCode doif(struct Global *global, int hash)
 
         cerror( global, ERROR_MISSING_ARGUMENT );
 
-        #if !OLD_PREPROCESSOR
         skipnl( global );               /* Prevent an extra     */
 
         unget( global );                /* Error message        */
-        #endif
 
         return(FPP_OK);
         }
@@ -493,7 +480,7 @@ ReturnCode doif(struct Global *global, int hash)
         if( ret )
             return( ret );
 
-        found = (found != 0);     /* Evaluate expr, != 0 is  TRUE */
+        found = (found != 0);     /* Evaluate expr, != 0 is  true */
 
         hash = L_ifdef;       /* #if is now like #ifdef */
         }
@@ -504,11 +491,9 @@ ReturnCode doif(struct Global *global, int hash)
                           /* ... is an error          */
             cerror( global, ERROR_MISSING_ARGUMENT );
 
-            #if !OLD_PREPROCESSOR
             skipnl( global );             /* Prevent an extra     */
 
             unget( global );              /* Error message        */
-            #endif
 
             return(FPP_OK);
             }
@@ -518,12 +503,12 @@ ReturnCode doif(struct Global *global, int hash)
 
     if( found == (hash == L_ifdef) )
         {
-        compiling = TRUE;
+        compiling = true;
 
         *global->ifptr |= TRUE_SEEN;
         }
     else
-        compiling = FALSE;
+        compiling = false;
 
     return(FPP_OK);
 }
@@ -607,7 +592,7 @@ ReturnCode doinclude( struct Global *global )
 
 ReturnCode openinclude( struct Global *global,
     char *filename,     /* Input file name         */
-    int searchlocal )   /* TRUE if #include "file" */
+    int searchlocal )   /* true if #include "file" */
 {
     /*
      * Actually open an include file.  This routine is only called from
@@ -684,17 +669,17 @@ int hasdirectory( char *source,   /* Directory to examine         */
     /*
      * If a device or directory is found in the source filename string, the
      * node/device/directory part of the string is copied to result and
-     * hasdirectory returns TRUE.  Else, nothing is copied and it returns FALSE.
+     * hasdirectory returns true.  Else, nothing is copied and it returns false.
      */
 
     char *tp2;
 
     if( (tp2 = strrchr( source, '/' ) ) == NULL )
-        return(FALSE);
+        return(false);
 
     strncpy( result, source, tp2 - source + 1 );
 
     result[tp2 - source + 1] = EOS;
 
-    return( TRUE );
+    return( true );
 }

@@ -84,8 +84,8 @@ FILE_LOCAL int SetOptions(int, char **, struct fppTag **);
 FILE_LOCAL char GetPrefs(struct fppTag **, char **);
 FILE_LOCAL char DoString(struct fppTag **, char *);
 
-FILE_LOCAL char ignore=FALSE;  /* if we should ignore strange flags! */
-FILE_LOCAL char display=FALSE; /* display all options in use! */
+FILE_LOCAL char ignore=false;  /* if we should ignore strange flags! */
+FILE_LOCAL char display=false; /* display all options in use! */
 
 FILE_LOCAL char dontreadprefs; /* set if only the command line is valid */
 
@@ -310,37 +310,37 @@ int SetOptions(int argc, char **argv, struct fppTag **tagptr)
 
       case 'H':			      /* display all whitespaces */
 	(*tagptr)->tag = FPPTAG_OUTPUTSPACE;
-	(*tagptr)->data= (void *)TRUE;
+	(*tagptr)->data= (void *)true;
 	(*tagptr)++;
 	break;
 
       case 'b': 		      /* display unbalance */
 	(*tagptr)->tag = FPPTAG_OUTPUTBALANCE;
-	(*tagptr)->data= (void *)TRUE;
+	(*tagptr)->data= (void *)true;
 	(*tagptr)++;
 	break;
 
       case 'f':			      /* output all defined functions! */
 	(*tagptr)->tag = FPPTAG_DISPLAYFUNCTIONS;
-	(*tagptr)->data= (void *)TRUE;
+	(*tagptr)->data= (void *)true;
 	(*tagptr)++;
         break;
 
       case 'F':			      /* output all included files! */
 	(*tagptr)->tag = FPPTAG_OUTPUTINCLUDES;
-	(*tagptr)->data= (void *)TRUE;
+	(*tagptr)->data= (void *)true;
 	(*tagptr)++;
         break;
 
       case 'V':			      /* do not output version */
 	(*tagptr)->tag = FPPTAG_IGNOREVERSION;
-	(*tagptr)->data= (void *)FALSE;
+	(*tagptr)->data= (void *)false;
 	(*tagptr)++;
 	break;
 
       case 'C':                       /* Keep comments */
 	(*tagptr)->tag = FPPTAG_KEEPCOMMENTS;
-	(*tagptr)->data= (void *)TRUE;
+	(*tagptr)->data= (void *)true;
 	(*tagptr)++;
 	break;
 	
@@ -352,12 +352,12 @@ int SetOptions(int argc, char **argv, struct fppTag **tagptr)
 
       case 'd':                       /* Display all options */
 	fprintf(stderr, "FOUND -d flag!\n");
-	display = TRUE;
+	display = true;
 	break;
 	
       case 'E':                       /* Ignore non-fatal errors */
 	(*tagptr)->tag=FPPTAG_IGNORE_NONFATAL;
-	(*tagptr)->data=(void *)TRUE;
+	(*tagptr)->data=(void *)true;
 	(*tagptr)++;
 	break;
 	
@@ -386,13 +386,13 @@ int SetOptions(int argc, char **argv, struct fppTag **tagptr)
 	  /* Do not output the 'line' keyword */
 	  (*tagptr)->tag=FPPTAG_OUTPUTLINE;
 	}
-	(*tagptr)->data=(void *)FALSE;
+	(*tagptr)->data=(void *)false;
 	(*tagptr)++;
 	break;
 
       case 'M':                       /* Do not warn at missing includes */
 	(*tagptr)->tag=FPPTAG_WARNMISSINCLUDE;
-	(*tagptr)->data=(void *)FALSE;
+	(*tagptr)->data=(void *)false;
 	(*tagptr)++;
 	break;
 
@@ -407,31 +407,31 @@ int SetOptions(int argc, char **argv, struct fppTag **tagptr)
 
       case 'N':                       /* No machine specific built-ins */
 	(*tagptr)->tag=FPPTAG_BUILTINS;
-	(*tagptr)->data=(void *)FALSE;
+	(*tagptr)->data=(void *)false;
 	(*tagptr)++;
 	break;
 
       case 'B':			      /* No predefines like __LINE__, etc. */
 	(*tagptr)->tag=FPPTAG_PREDEFINES;
-	(*tagptr)->data=(void *)FALSE;
+	(*tagptr)->data=(void *)false;
 	(*tagptr)++;
 	break;
 	
       case 'P':			      /* No C++ comments */
 	(*tagptr)->tag=FPPTAG_IGNORE_CPLUSPLUS;
-	(*tagptr)->data=(void *)TRUE;
+	(*tagptr)->data=(void *)true;
 	(*tagptr)++;
 	break;
 	
       case 'p':			      /* warn about illegal # - instructions */
 	(*tagptr)->tag = FPPTAG_WARNILLEGALCPP;
-	(*tagptr)->data= (void *)TRUE;
+	(*tagptr)->data= (void *)true;
 	(*tagptr)++;
 	break;
 
       case 'R':
 	(*tagptr)->tag = FPPTAG_RIGHTCONCAT;
-	(*tagptr)->data= (void *)TRUE;
+	(*tagptr)->data= (void *)true;
 	(*tagptr)++;
 	break;
 
@@ -462,18 +462,18 @@ int SetOptions(int argc, char **argv, struct fppTag **tagptr)
       case 'w':			      /* Output all #defines but not the
 					 main file */
 	(*tagptr)->tag=FPPTAG_OUTPUTMAIN;
-	(*tagptr)->data=(void *)FALSE;
+	(*tagptr)->data=(void *)false;
 	(*tagptr)++;
 	
       case 'W':			      /* Output all #defines */
         if(!strncmp(ap, "WW", 2)) {
           (*tagptr)->tag=FPPTAG_WEBMODE;
-          (*tagptr)->data=(void *)TRUE;
+          (*tagptr)->data=(void *)true;
           (*tagptr)++;
         }
         else {
           (*tagptr)->tag=FPPTAG_OUTPUT_DEFINES;
-          (*tagptr)->data=(void *)TRUE;
+          (*tagptr)->data=(void *)true;
           (*tagptr)++;
         }
 	break;

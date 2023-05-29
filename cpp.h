@@ -42,10 +42,6 @@
 #define tolower(c) ((c) + ('a' - 'A'))
 #endif /* no tolower */
 
-#ifndef TRUE
-#define TRUE		1
-#define FALSE		0
-#endif
 #ifndef EOS
 /*
  * This is predefined in Decus C
@@ -139,9 +135,9 @@
 /*
  * These bits are set in ifstack[]
  */
-#define WAS_COMPILING	1		/* TRUE if compile set at entry */
-#define ELSE_SEEN	2		/* TRUE when #else processed	*/
-#define TRUE_SEEN	4		/* TRUE when #if TRUE processed */
+#define WAS_COMPILING	1		/* true if compile set at entry */
+#define ELSE_SEEN	2		/* true when #else processed	*/
+#define TRUE_SEEN	4		/* true when #if true processed */
 
 /*
  * Define bits for the basic types and their adjectives

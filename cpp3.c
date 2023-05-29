@@ -70,7 +70,7 @@ ReturnCode addfile(struct Global *global,
   file->fp = fp;                        /* Better remember FILE *       */
   file->buffer[0] = EOS;                /* Initialize for first read    */
   global->line = 1;                     /* Working on line 1 now        */
-  global->wrongline = TRUE;             /* Force out initial #line      */
+  global->wrongline = true;             /* Force out initial #line      */
   return(FPP_OK);
 }
 
@@ -81,12 +81,12 @@ int dooptions(struct Global *global, struct fppTag *tags)
    * It is called only at cpp startup.
    */
   DEFBUF *dp;
-  char end=FALSE; /* end of taglist */
+  char end=false; /* end of taglist */
 
   while(tags && !end) {
     switch(tags->tag) {
     case FPPTAG_END:
-      end=TRUE;
+      end=true;
       break;
     case FPPTAG_INITFUNC:
       global->initialfunc = (char *) tags->data;
@@ -129,8 +129,8 @@ int dooptions(struct Global *global, struct fppTag *tags)
       break;
     case FPPTAG_KEEPCOMMENTS:
       if(tags->data) {
-        global->cflag = TRUE;
-        global->keepcomments = TRUE;
+        global->cflag = true;
+        global->keepcomments = true;
       }
       break;
     case FPPTAG_DEFINE:
@@ -149,7 +149,7 @@ int dooptions(struct Global *global, struct fppTag *tags)
         /*
          * Now, save the word and its definition.
          */
-        dp = defendel(global, symbol, FALSE);
+        dp = defendel(global, symbol, false);
         if(!dp)
           return(FPP_OUT_OF_MEMORY);
         dp->repl = savestring(global, text);
@@ -157,7 +157,7 @@ int dooptions(struct Global *global, struct fppTag *tags)
       }
       break;
     case FPPTAG_IGNORE_NONFATAL:
-      global->eflag = TRUE;
+      global->eflag = true;
       break;
     case FPPTAG_INCLUDE_DIR:
       if (global->incend >= &global->incdir[NINCLUDE]) {
@@ -192,7 +192,7 @@ int dooptions(struct Global *global, struct fppTag *tags)
       {
         SIZES *sizp;    /* For -S               */
         int size;       /* For -S               */
-        int isdatum;    /* FALSE for -S*        */
+        int isdatum;    /* false for -S*        */
         int endtest;    /* For -S               */
 
         char *text=(char *)tags->data;
@@ -227,7 +227,7 @@ int dooptions(struct Global *global, struct fppTag *tags)
       }
       break;
     case FPPTAG_UNDEFINE:
-      if (defendel(global, (char *)tags->data, TRUE) == NULL)
+      if (defendel(global, (char *)tags->data, true) == NULL)
         cwarn(global, WARN_NOT_DEFINED, tags->data);
       break;
     case FPPTAG_OUTPUT_DEFINES:
@@ -300,7 +300,7 @@ ReturnCode initdefines(struct Global *global)
   if (!(global->nflag & NFLAG_BUILTIN)) {
     for (pp = global->preset; *pp != NULL; pp++) {
       if (*pp[0] != EOS) {
-        dp = defendel(global, *pp, FALSE);
+        dp = defendel(global, *pp, false);
         if(!dp)
           return(FPP_OUT_OF_MEMORY);
         dp->repl = savestring(global, "1");
@@ -316,7 +316,7 @@ ReturnCode initdefines(struct Global *global)
    */
   if (!(global->nflag & NFLAG_PREDEFINE)) {
     for (pp = global->magic, i = DEF_NOARGS; *pp != NULL; pp++) {
-      dp = defendel(global, *pp, FALSE);
+      dp = defendel(global, *pp, false);
       if(!dp)
         return(FPP_OUT_OF_MEMORY);
       dp->nargs = --i;
@@ -325,7 +325,7 @@ ReturnCode initdefines(struct Global *global)
     /*
      * Define __DATE__ as today's date.
      */
-    dp = defendel(global, "__DATE__", FALSE);
+    dp = defendel(global, "__DATE__", false);
     tp = malloc(14);
     if(!tp || !dp)
       return(FPP_OUT_OF_MEMORY);
@@ -341,7 +341,7 @@ ReturnCode initdefines(struct Global *global)
     /*
      * Define __TIME__ as this moment's time.
      */
-    dp = defendel(global, "__TIME__", FALSE);
+    dp = defendel(global, "__TIME__", false);
     tp = malloc(11);
     if(!tp || !dp)
       return(FPP_OUT_OF_MEMORY);
@@ -370,25 +370,25 @@ void deldefines(struct Global *global)
    */
   if (global->wflag < 2) {
     for (pp = global->preset; *pp != NULL; pp++) {
-      defendel(global, *pp, TRUE);
+      defendel(global, *pp, true);
     }
   }
   /*
    * The magic pre-defines __FILE__ and __LINE__
    */
   for (pp = global->magic, i = DEF_NOARGS; *pp != NULL; pp++) {
-    defendel(global, *pp, TRUE);
+    defendel(global, *pp, true);
   }
 #if OK_DATE
   /*
    * Undefine __DATE__.
    */
-  defendel(global, "__DATE__", TRUE);
+  defendel(global, "__DATE__", true);
 
   /*
    * Undefine __TIME__.
    */
-  defendel(global, "__TIME__", TRUE);
+  defendel(global, "__TIME__", true);
 #endif
   return;
 }
