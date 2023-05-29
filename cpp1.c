@@ -27,7 +27,7 @@ SOFTWARE.
 
 FILE_LOCAL ReturnCode output(struct Global *, int); /* Output one character */
 FILE_LOCAL void sharp(struct Global *);
-inline FILE_LOCAL ReturnCode cppmain(struct Global *);
+FILE_LOCAL ReturnCode cppmain(struct Global *);
 
 int fppPreProcess(struct fppTag *tags)
 {
@@ -136,7 +136,7 @@ int fppPreProcess(struct fppTag *tags)
   return(IO_NORMAL);       /* No errors or -E option set   */
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 ReturnCode cppmain(struct Global *global)
 {
   /*

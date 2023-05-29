@@ -26,8 +26,8 @@ SOFTWARE.
 
 FILE_LOCAL void dump_line(struct Global *, int *);
 FILE_LOCAL ReturnCode doif(struct Global *, int);
-inline FILE_LOCAL ReturnCode doinclude(struct Global *);
-inline FILE_LOCAL int hasdirectory(char *, char *);
+FILE_LOCAL ReturnCode doinclude(struct Global *);
+FILE_LOCAL int hasdirectory(char *, char *);
 
 
 /*
@@ -528,7 +528,7 @@ ReturnCode doif(struct Global *global, int hash)
     return(FPP_OK);
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 ReturnCode doinclude( struct Global *global )
 {
     /*
@@ -677,7 +677,7 @@ ReturnCode openinclude( struct Global *global,
     return( FPP_NO_INCLUDE );
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 int hasdirectory( char *source,   /* Directory to examine         */
     char *result )  /* Put directory stuff here     */
 {

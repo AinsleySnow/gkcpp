@@ -24,12 +24,12 @@ SOFTWARE.
 #include	"cppdef.h"
 #include	"cpp.h"
 
-inline FILE_LOCAL ReturnCode checkparm(struct Global *, int, DEFBUF *, int);
-inline FILE_LOCAL ReturnCode stparmscan(struct Global *, int);
-inline FILE_LOCAL ReturnCode textput(struct Global *, char *);
+FILE_LOCAL ReturnCode checkparm(struct Global *, int, DEFBUF *, int);
+FILE_LOCAL ReturnCode stparmscan(struct Global *, int);
+FILE_LOCAL ReturnCode textput(struct Global *, char *);
 FILE_LOCAL ReturnCode charput(struct Global *, int);
-inline FILE_LOCAL ReturnCode expcollect(struct Global *);
-inline FILE_LOCAL char *doquoting(char *, char *);
+FILE_LOCAL ReturnCode expcollect(struct Global *);
+FILE_LOCAL char *doquoting(char *, char *);
 
 
 ReturnCode dodefine(struct Global *global)
@@ -223,7 +223,7 @@ ReturnCode dodefine(struct Global *global)
   return(FPP_OK);
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 ReturnCode checkparm(struct Global *global,
 		     int c,
 		     DEFBUF *dp,
@@ -262,7 +262,7 @@ ReturnCode checkparm(struct Global *global,
   return(ret);
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 ReturnCode stparmscan(struct Global *global, int delim)
 {
   /*
@@ -307,7 +307,7 @@ void doundef(struct Global *global)
   }
 }
 
-inline FILE_LOCAL  
+FILE_LOCAL  
 ReturnCode textput(struct Global *global, char *text)
 {
   /*
@@ -466,7 +466,7 @@ ReturnCode expand(struct Global *global, DEFBUF *tokenp)
   return(ret);
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 ReturnCode expcollect(struct Global *global)
 {
   /*
@@ -533,7 +533,7 @@ ReturnCode expcollect(struct Global *global)
   
 #if OK_CONCAT
   
-inline FILE_LOCAL
+FILE_LOCAL
 char *doquoting(char *to, char *from)
 {
   *to++ = '"';

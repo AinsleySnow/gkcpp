@@ -24,8 +24,8 @@ SOFTWARE.
 #include "cppdef.h"
 #include "cpp.h"
 
-inline FILE_LOCAL void outadefine(struct Global *, DEFBUF *);
-inline FILE_LOCAL void domsg(struct Global *, ErrorCode, va_list);
+FILE_LOCAL void outadefine(struct Global *, DEFBUF *);
+FILE_LOCAL void domsg(struct Global *, ErrorCode, va_list);
 FILE_LOCAL char *incmem(struct Global *, char *, int);
 
 /*
@@ -633,7 +633,7 @@ void outdefines(struct Global *global)
   }
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 void outadefine(struct Global *global, DEFBUF *dp)
 {
   char *cp;
@@ -982,7 +982,7 @@ int cget(struct Global *global)
  * Error messages and other hacks.
  */
 
-inline FILE_LOCAL
+FILE_LOCAL
 void domsg(struct Global *global,
   ErrorCode error,  /* error message number */
   va_list arg)      /* Something for the message    */

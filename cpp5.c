@@ -24,12 +24,12 @@ SOFTWARE.
 #include "cppdef.h"
 #include "cpp.h"
 
-inline FILE_LOCAL ReturnCode evallex(struct Global *, int, int *);
-inline FILE_LOCAL ReturnCode dosizeof(struct Global *, int *);
+FILE_LOCAL ReturnCode evallex(struct Global *, int, int *);
+FILE_LOCAL ReturnCode dosizeof(struct Global *, int *);
 inline FILE_LOCAL int bittest(int);
-inline FILE_LOCAL int evalnum(struct Global *, int);
-inline FILE_LOCAL int evalchar(struct Global *, int);
-inline FILE_LOCAL int *evaleval(struct Global *, int *, int, int);
+FILE_LOCAL int evalnum(struct Global *, int);
+FILE_LOCAL int evalchar(struct Global *, int);
+FILE_LOCAL int *evaleval(struct Global *, int *, int, int);
 
 /*
  * Evaluate an #if expression.
@@ -372,7 +372,7 @@ ReturnCode eval(struct Global *global, int *eval)
   return(FPP_OK);
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 ReturnCode evallex(struct Global *global,
 		   int skip,	/* TRUE if short-circuit evaluation */
 		   int *op)
@@ -509,7 +509,7 @@ else if (streq(global->tokenbuf, "sizeof")) { /* New sizeof hackery   */
 
 #if OK_SIZEOF
 
-inline FILE_LOCAL
+FILE_LOCAL
 ReturnCode dosizeof(struct Global *global, int *result)
 {
   /*
@@ -650,7 +650,7 @@ int bittest(int value)
 
 #endif /* OK_SIZEOF */
 
-inline FILE_LOCAL
+FILE_LOCAL
 int evalnum(struct Global *global, int c)
 {
   /*
@@ -689,7 +689,7 @@ int evalnum(struct Global *global, int c)
   return (value);
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 int evalchar(struct Global *global,
 	     int skip)		/* TRUE if short-circuit evaluation	*/
      /*
@@ -791,7 +791,7 @@ int evalchar(struct Global *global,
   return (value);
 }
 
-inline FILE_LOCAL
+FILE_LOCAL
 int *evaleval(struct Global *global,
 	      int *valp,
 	      int op,
