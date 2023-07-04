@@ -104,7 +104,7 @@ int main(int argc, char **argv)
    */  
 
   tagptr->tag=FPPTAG_INCLUDE_DIR;
-  tagptr->data = "/usr/include/";
+  tagptr->data = "/usr/include/Ginkgo/";
   tagptr++;
 
   if(GetPrefs(&tagptr, &dealloc))
