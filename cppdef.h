@@ -297,7 +297,7 @@
 #endif
 
 #define VERSION_TEXT                               \
-"Ginkgo C Preprocessor v0.0.1 "                    \
+"Ginkgo C Preprocessor v0.0.1\n"                    \
 "Copyright (C) by AinsleySnow 2023 - present\n"    \
 "based on Frexx C Preprocessor v1.5.1\n"           \
 "Copyright (C) by FrexxWare 1993 - 2002.\n"        \
