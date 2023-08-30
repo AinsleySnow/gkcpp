@@ -104,7 +104,15 @@ int main(int argc, char **argv)
    */  
 
   tagptr->tag=FPPTAG_INCLUDE_DIR;
-  tagptr->data = "/usr/include/Ginkgo/";
+  tagptr->data = "/usr/include/";
+  tagptr++;
+
+  tagptr->tag=FPPTAG_INCLUDE_DIR;
+  tagptr->data = "/usr/include/linux";
+  tagptr++;
+
+  tagptr->tag=FPPTAG_INCLUDE_DIR;
+  tagptr->data = "/usr/include/x86_64-linux-gnu";
   tagptr++;
 
   if(GetPrefs(&tagptr, &dealloc))
