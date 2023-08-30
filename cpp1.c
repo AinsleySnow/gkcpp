@@ -498,14 +498,10 @@ void Putchar(struct Global *global, int c)
    */
   if(!global->out)
     return;
-#if defined(UNIX)
   if(global->output)
     global->output(c, global->userdata);
   else
     putchar(c);
-#else /* amiga */
-  global->output(c, global->userdata);
-#endif
 }
 
 void Putstring(struct Global *global, char *string)
