@@ -672,11 +672,18 @@ int evalnum(struct Global *global, int c)
   value = 0;
   for (;;) {
     c1 = c;
+
     if (isascii(c) && isupper(c1))
       c1 = tolower(c1);
+    if (c1 == 'l' || c1 == 'u') {
+      c = cget(global);
+      continue;
+    }
+
     if (c1 >= 'a')
       c1 -= ('a' - 10);
-    else c1 -= '0';
+    else
+      c1 -= '0';
     if (c1 < 0 || c1 >= base)
       break;
     value *= base;
