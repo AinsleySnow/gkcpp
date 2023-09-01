@@ -61,11 +61,23 @@ int fppPreProcess(struct fppTag *tags)
     global->incend = global->incdir;
 
     /* names defined at cpp start */
-    global->preset[0] = "frexxcpp"; /* This is the Frexx cpp program */
+    global->preset[0] = "gkcpp"; /* This is the Ginkgo cpp program */
 
     // No amiga, no unix - their era have passed
-    global->preset[1] = "linux"; /* This is the Linux system      */
-    global->preset[2] = NULL;
+    global->preset[1] = "linux"; /* This is the Linux system */
+    global->preset[2] = "__amd64"; /* With amd64(x64) architecture */
+    global->preset[3] = "__amd64__";
+    global->preset[4] = "__gnu_linux__";
+    global->preset[5] = "__linux";
+    global->preset[6] = "__linux__";
+    global->preset[7] = "__unix";
+    global->preset[8] = "__unix__";
+    global->preset[9] = "__x86_64";
+    global->preset[10] = "__x86_64__";
+    global->preset[11] = "__LP64__";
+    global->preset[12] = "_LP64";
+    global->preset[13] = "__ELF__";
+    global->preset[14] = NULL;
 
     /* Note: order is important   */
     global->magic[0] = "__LINE__";

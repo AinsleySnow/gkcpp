@@ -168,7 +168,7 @@ struct Global
      * Note: it is not clear that this is part of the Ansi Standard.
      * The -B option supresses preset definitions.
      */
-    char *preset[5]; /* names defined at cpp start   */
+    char *preset[20]; /* names defined at cpp start   */
 
     /*
      * The value of these predefined symbols must be recomputed whenever
