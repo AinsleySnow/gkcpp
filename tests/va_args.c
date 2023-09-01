@@ -6,6 +6,8 @@
 
 #define VARIADIC1(...) printf(# __VA_ARGS__)
 #define VARIADIC2(...) printf(a##__VA_ARGS__)
+#define VARIADIC3(ARGS...) printf(# ARGS)
+#define VARIADIC4(ARGS    ...) printf(# ARGS)
 
 int main()
 {
@@ -19,6 +21,8 @@ int main()
     char* ac = "%d %d\n";
     int b = 1;
     VARIADIC2(c, b, 3);
+    VARIADIC3(Hello, world\n);
+    VARIADIC4(Hello, world\n);
 
     SUCCESS;
 }
