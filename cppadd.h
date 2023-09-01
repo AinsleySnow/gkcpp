@@ -193,6 +193,7 @@ struct Global
     char *parmp;              /* Free space in parm           */
     char *parlist[LASTPARM];  /* -> start of each parameter   */
     int nargs;                /* Parameters for this macro    */
+    bool variadic;            /* whether the macro is variadic or not */    
 
     DEFBUF *macro; /* Catches start of infinite macro      */
 

@@ -33,6 +33,7 @@
  * In general, definitions in this file should not be changed.
  */
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #ifndef toupper
@@ -165,6 +166,7 @@ typedef struct defbuf {
 	char		*repl;		/* -> replacement	*/
 	int		hash;		/* Symbol table hash	*/
 	int		nargs;		/* For define(args)     */
+    bool    variadic;   /* For define(args, ...) */
 	char		name[1];	/* #define name 	*/
 } DEFBUF;
 
