@@ -66,9 +66,19 @@
  * C1 control character region (decimal 128 .. (128 + PAR_MAC)) which will
  * be ok as long as PAR_MAC is less than 33).  Note that the last PAR_MAC
  * value is reserved for string substitution.
+ * 
+ * FIXME:
+ * We define VA_ARGS and VA_OPT here to enable use of __VA_ARGS__ and __VA_OPT__
+ * magic in the macro body. However, it is important to note that this method
+ * only works if the macro takes no more than 31 parameters and the macro body
+ * only contains ASCII characters. I will fix the problem when restructuring
+ * the preprocessor.
  */
 
-#define MAC_PARM	0x7F		/* Macro formals start here	*/
+#define MAC_PARM	0x7F		                /* Macro formals start here	*/
+#define VA_ARGS     (MAC_PARM + PAR_MAC + 1)    /* Magic bits for __VA_ARGS__ */
+#define VA_OPT      (MAC_PARM + PAR_MAC + 2)    /* Magic bits for __VA_OPT__ */
+
 #ifndef OS9
 #if (PAR_MAC >= 33)
 #error	"assertion fails -- PAR_MAC isn't less than 33"
