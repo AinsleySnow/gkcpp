@@ -290,6 +290,10 @@ typedef enum
     ERROR_IF_OPERAND,
     ERROR_STRANG_CHARACTER,
     ERROR_STRANG_CHARACTER2,
+    ERROR_VA_OPT_RIGHT_PAR,
+    ERROR_VA_OPT_EARLY_EOS,
+    ERROR_NOT_PARAMETER_NAME,
+    ERROR_MIDLIST_ELLIPSIS,
 
     BORDER_ERROR_WARN, /* below this number: errors, above: warnings */
 
@@ -410,4 +414,4 @@ int cget(struct Global *);
 void deldefines(struct Global *);
 char *Getmem(struct Global *, int);
 ReturnCode openinclude(struct Global *, char *, int);
-ReturnCode expstuff(struct Global *, char *, char *);
+ReturnCode expstuff(struct Global *, char *, char *, int, int);

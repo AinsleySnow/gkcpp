@@ -24,7 +24,7 @@ SOFTWARE.
 #include "cppdef.h"
 #include "cpp.h"
 
-FILE_LOCAL ReturnCode checkparm(struct Global *, int, DEFBUF *, int);
+FILE_LOCAL ReturnCode checkparm(struct Global *, int, DEFBUF *, int, bool);
 FILE_LOCAL ReturnCode stparmscan(struct Global *, int);
 FILE_LOCAL ReturnCode textput(struct Global *, char *);
 FILE_LOCAL ReturnCode charput(struct Global *, int);
@@ -63,7 +63,9 @@ ReturnCode dodefine(struct Global *global)
      * checkparm	called when a token is scanned.  It checks through the
      *		array of formal parameters.  If a match is found, the
      *		token is replaced by a control byte which will be used
-     *		to locate the parameter when the macro is expanded.
+     *		to locate the parameter when the macro is expanded. If the last
+     *      parameter is variadic, the function directly replace all the
+     *      occurances of the last parameter with the VA_ARGS magic cookie.
      * textput	puts a string in the macro work area (parm[]), updating
      *		parmp to point to the first free byte in parm[].
      *		textput() tests for work buffer overflow.
@@ -74,6 +76,9 @@ ReturnCode dodefine(struct Global *global)
     DEFBUF *dp;     /* -> new definition	*/
     int isredefine; /* true if redefined	*/
     char *old;      /* Remember redefined	*/
+    bool valast = false;    /* If this field is set, the occurances of the last */
+                            /* parameter will be replaced with magic cookie VA_ARG */
+    bool ellipsis = false;  /* Have we seen the ellipsis? */
     ReturnCode ret;
 #if OK_CONCAT
     int quoting; /* Remember we saw a #	*/
@@ -102,6 +107,7 @@ ReturnCode dodefine(struct Global *global)
     if ((c = get(global)) == '(')
     {                      /* With arguments?      */
         global->nargs = 0; /* Init formals counter */
+        global->variadic = 0; /* and things for check whether the macro is variadic */
         do
         { /* Collect formal parms */
             if (global->nargs >= LASTPARM)
@@ -111,13 +117,47 @@ ReturnCode dodefine(struct Global *global)
             }
             else if ((c = skipws(global)) == ')')
                 break; /* Got them all 	*/
+            else if (ellipsis) /* Something behind ellipsis? */
+            {
+                cerror(global, ERROR_MIDLIST_ELLIPSIS);
+                return FPP_OK;
+            }
+
+            if (c == '.')
+            { // variadic macro
+                for (int i = 0; i < 2; ++i)
+                {
+                    c = get(global);
+                    if (c != '.')
+                        goto error;
+                }
+                ellipsis = true;
+                global->variadic = true;
+                continue;
+            }
             else if (type[c] != LET)
             { /* Bad formal syntax    */
+            error:
                 cerror(global, ERROR_DEFINE_SYNTAX);
                 global->inmacro = false; /* Stop <newline> hack	*/
                 return (FPP_OK);
             }
             scanid(global, c);                                /* Get the formal param */
+            c = skipws(global);                               /* Trailing with ellipsis? */
+            if (c == '.')                                     /* Got ya! Ellipsis! */
+            {
+                for (int k = 0; k < 2; ++k)
+                {
+                    c = get(global);
+                    if (c != '.')
+                        goto error;
+                }
+                ellipsis = true;
+                valast = true;
+            }
+            else
+                unget(global);
+
             global->parlist[global->nargs++] = global->parmp; /* Save its start */
             ret = textput(global, global->tokenbuf);          /* Save text in parm[]  */
             if (ret)
@@ -144,14 +184,18 @@ ReturnCode dodefine(struct Global *global)
     global->workp = global->work; /* Replacement put here */
     global->inmacro = true;       /* Keep \<newline> now	*/
     quoting = 0;                  /* No # seen yet.	*/
+
+    /* Compile macro body */
     while (c != EOF_CHAR && c != '\n')
-    { /* Compile macro body   */
+    {
     #if OK_CONCAT
         if (c == '#')
         { /* Token concatenation? */
             if ((c = get(global)) != '#')
             {                /* No, not really       */
                 quoting = 1; /* Maybe quoting op.	*/
+                if (isspace(c))
+                    c = skipws(global);
                 continue;
             }
             while (global->workp > global->work && type[global->workp[-1]] == SPA)
@@ -166,9 +210,11 @@ ReturnCode dodefine(struct Global *global)
         {
         case LET:
         #if OK_CONCAT
-            ret = checkparm(global, c, dp, quoting); /* Might be a formal    */
+            /* Might be a formal or magic identifiers (__VA_ARGS__ or __VA_OPT__) */
+            ret = checkparm(global, c, dp, quoting, valast);
         #else
-            ret = checkparm(c, dp); /* Might be a formal    */
+            /* Might be a formal or magic identifiers (__VA_ARGS__ or __VA_OPT__) */
+            ret = checkparm(c, dp, valast);
         #endif
             if (ret)
                 return (ret);
@@ -222,9 +268,12 @@ ReturnCode dodefine(struct Global *global)
     unget(global);                                                /* For control check    */
     if (global->workp > global->work && global->workp[-1] == ' ') /* Drop trailing blank  */
         global->workp--;
-    *global->workp = EOS;                        /* Terminate work	*/
-    dp->repl = savestring(global, global->work); /* Save the string      */
-    dp->nargs = global->nargs;                   /* Save arg count	*/
+    *global->workp = EOS;                       /* Terminate work */
+    dp->repl = savestring(global, global->work);/* Save the string */
+    dp->nargs = valast ?
+        global->nargs - 1 : global->nargs;      /* Save arg count */
+    dp->variadic = global->variadic || valast;  /* Save whether the macro is variadic */
+
     if (isredefine)
     { /* Error if redefined   */
         if ((old != NULL && dp->repl != NULL && !streq(old, dp->repl)) ||
@@ -242,7 +291,8 @@ FILE_LOCAL
 ReturnCode checkparm(struct Global *global,
                      int c,
                      DEFBUF *dp,
-                     int quoting) /* Preceded by a # ?	*/
+                     int quoting,  /* Preceded by a # ?	*/
+                     bool valast) /* The last formal trailed by ellipsis? */
 {
     /*
      * Replace this param if it's defined.  Note that the macro name is a
@@ -256,23 +306,39 @@ ReturnCode checkparm(struct Global *global,
     char *cp;
     ReturnCode ret = FPP_OK;
 
+#if OK_CONCAT
+    if (quoting)
+    {                                   /* Special handling of  */
+        ret = save(global, QUOTE_PARM); /* #formal inside defn  */
+        if (ret)
+            return (ret);
+    }
+#endif
+
     scanid(global, c); /* Get parm to tokenbuf */
+    if (streq("__VA_ARGS__", global->tokenbuf))
+        return save(global, VA_ARGS);
+    else if (streq("__VA_OPT__", global->tokenbuf))
+        return save(global, VA_OPT);
+
     for (i = 0; i < global->nargs; i++)
     { /* For each argument    */
         if (streq(global->parlist[i], global->tokenbuf))
         { /* If it's known */
-        #if OK_CONCAT
-            if (quoting)
-            {                                   /* Special handling of  */
-                ret = save(global, QUOTE_PARM); /* #formal inside defn  */
-                if (ret)
-                    return (ret);
-            }
-        #endif
-            ret = save(global, i + MAC_PARM); /* Save a magic cookie  */
+            if (i == global->nargs - 1 && valast) /* Variadic lastest parameter? */
+                ret = save(global, VA_ARGS);
+            else
+                ret = save(global, i + MAC_PARM); /* Save a magic cookie  */
             return (ret);                     /* And exit the search	*/
         }
     }
+
+    if (quoting) // This means... '#' is not followed by a parameter name
+    {
+        cerror(global, ERROR_NOT_PARAMETER_NAME, global->tokenbuf);
+        return FPP_OK;
+    }
+
     if (streq(dp->name, global->tokenbuf))   /* Macro name in body?  */
         ret = save(global, DEF_MAGIC);       /* Save magic marker    */
     for (cp = global->tokenbuf; *cp != EOS;) /* And save             */
@@ -489,7 +555,7 @@ ReturnCode expand(struct Global *global, DEFBUF *tokenp)
         }
         else if (!(ret = expcollect(global)))
         { /* Collect arguments    */
-            if (tokenp->nargs != global->nargs)
+            if (tokenp->nargs != global->nargs && !tokenp->variadic)
             { /* Should be an error?  */
                 cwarn(global, WARN_WRONG_NUMBER_ARGUMENTS, tokenp->name);
             }
@@ -498,9 +564,11 @@ ReturnCode expand(struct Global *global, DEFBUF *tokenp)
         {                 /* Collect arguments		*/
             return (ret); /* We failed in argument colleting! */
         }
-    case DEF_NOARGS:                                        /* No parameters just stuffs	*/
-        ret = expstuff(global, tokenp->name, tokenp->repl); /* expand macro   */
-    }                                                       /* nargs switch 		*/
+        /* fall through */
+    case DEF_NOARGS:                                  /* No parameters just stuffs */
+        ret = expstuff(global, tokenp->name, tokenp->repl,
+                       tokenp->nargs, global->nargs); /* expand macro */
+    }                                                 /* nargs switch */
     return (ret);
 }
 
@@ -596,12 +664,61 @@ char *doquoting(char *to, char *from)
 
 #endif
 
+#define CHK_OUT_OF_SPACE(s) \
+    do \
+    { \
+        if ((defp + s) >= defend) \
+        { \
+            cfatal(global, FATAL_OUT_OF_SPACE_IN_ARGUMENT, MacroName); \
+            return (FPP_OUT_OF_SPACE_IN_MACRO_EXPANSION); \
+        } \
+    } while (0)
+
+FILE_LOCAL
+ReturnCode dovaargs(struct Global *global, char *MacroName,
+                    char **pdefp, char *defend, char quoting,
+                    int listn, int argn)
+{
+    char *defp = *pdefp;
+    if (quoting)
+    {
+        CHK_OUT_OF_SPACE(0);
+        *defp++ = '"';
+    }
+    for (int i = listn; i < argn - 1; ++i)
+    {
+        int size = strlen(global->parlist[i]);
+        CHK_OUT_OF_SPACE(size + 2);
+        strncpy(defp, global->parlist[i], size);
+        defp += size;
+        *defp++ = ',';
+        *defp++ = ' ';
+    }
+
+    int size = strlen(global->parlist[argn - 1]);
+    CHK_OUT_OF_SPACE(size);
+    strncpy(defp, global->parlist[argn - 1], size);
+    defp += size;
+
+    if (quoting)
+    {
+        CHK_OUT_OF_SPACE(1);
+        *defp++ = '"';
+    }
+    *defp = '\0';
+    *pdefp = defp;
+    return FPP_OK;
+}
+
 ReturnCode expstuff(struct Global *global,
                     char *MacroName,
-                    char *MacroReplace)
+                    char *MacroReplace,
+                    int listn, // argument number in argument list
+                    int argn)  // argument number when using the macro
 {
     /*
      * Stuff the macro body, replacing formal parameters by actual parameters.
+     * Note that we have to handle '#' but not '##' in this function.
      */
     int c;            /* Current character	*/
     char *inp;        /* -> repl string	*/
@@ -611,6 +728,9 @@ ReturnCode expstuff(struct Global *global,
     int string_magic; /* String formal hack	*/
     FILEINFO *file;   /* Funny #include	*/
     ReturnCode ret;
+    bool vaopt = false; /* in __VA_OPT__ */
+    bool skipopt = false; /* dump things in __VA_OPT__? */
+    int paren = 0;      /* layer of parenthese seen in __VA_OPT__ */
 #if OK_CONCAT
     char quoting; /* Quote macro argument */
 #endif
@@ -633,6 +753,31 @@ ReturnCode expstuff(struct Global *global,
                 continue;    /* Get next character	*/
             }
         #endif
+            if (c == VA_OPT)
+            {
+                vaopt = 1;
+                skipopt = listn == argn;
+                continue;
+            }
+
+            if (vaopt)
+            {
+                if (c == '(')
+                    ++paren;
+                else if (c == ')')
+                    --paren;
+                if (paren == 0)
+                {
+                    vaopt = false;
+                    skipopt = false;
+                    continue;
+                }
+                else if (paren == 1 && c == '(')
+                    continue;
+                if (skipopt)
+                    continue;
+            }
+
             if (c >= MAC_PARM && c <= (MAC_PARM + PAR_MAC))
             {
                 string_magic = (c == (MAC_PARM + PAR_MAC));
@@ -641,9 +786,10 @@ ReturnCode expstuff(struct Global *global,
                 /*
                  * Replace formal parameter by actual parameter string.
                  */
-                if ((c -= MAC_PARM) < global->nargs)
+                if ((c - MAC_PARM) < global->nargs)
                 {
-                    size = strlen(global->parlist[c]);
+                    int i = c - MAC_PARM;
+                    size = strlen(global->parlist[i]);
                 #if OK_CONCAT
                     if (quoting)
                     {
@@ -651,28 +797,34 @@ ReturnCode expstuff(struct Global *global,
                         size *= 2; /* worst case condition */
                     }
                 #endif
-                    if ((defp + size) >= defend)
-                    {
-                        cfatal(global, FATAL_OUT_OF_SPACE_IN_ARGUMENT, MacroName);
-                        return (FPP_OUT_OF_SPACE_IN_MACRO_EXPANSION);
-                    }
+                    CHK_OUT_OF_SPACE(size);
                     /*
                      * Erase the extra set of quotes.
                      */
-                    if (string_magic && defp[-1] == global->parlist[c][0])
+                    if (string_magic && defp[-1] == global->parlist[i][0])
                     {
-                        strcpy(defp - 1, global->parlist[c]);
+                        strcpy(defp - 1, global->parlist[i]);
                         defp += (size - 2);
                     }
-                #if OK_CONCAT
+                    #if OK_CONCAT
                     else if (quoting)
-                        defp = doquoting(defp, global->parlist[c]);
-                #endif
+                        defp = doquoting(defp, global->parlist[i]);
+                    #endif
                     else
                     {
-                        strcpy(defp, global->parlist[c]);
+                        strcpy(defp, global->parlist[i]);
                         defp += size;
                     }
+                }
+            }
+            else if (c == VA_ARGS)
+            {
+                if (listn != argn)
+                {
+                    ReturnCode ret = dovaargs(global, MacroName,
+                        &defp, defend, quoting, listn, argn);
+                    if (ret)
+                        return (ret);
                 }
             }
             else if (defp >= defend)
@@ -688,3 +840,5 @@ ReturnCode expstuff(struct Global *global,
     *defp = EOS;
     return (FPP_OK);
 }
+
+#undef CHK_OUT_OF_SPACE

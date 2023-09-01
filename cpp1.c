@@ -386,8 +386,8 @@ ReturnCode cppmain(struct Global *global)
                             }
                             if (a == global->excluded)
                             {
-                                expstuff(global, "__brace__", "{");
-                                expstuff(global, "__init_func__", global->initialfunc);
+                                expstuff(global, "__brace__", "{", 0, 0);
+                                expstuff(global, "__init_func__", global->initialfunc, 0, 0);
                                 initfunc = true;
                             }
                         }

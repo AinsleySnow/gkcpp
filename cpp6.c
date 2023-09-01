@@ -1114,6 +1114,10 @@ void domsg(struct Global *global,
         "#if bug, operand = %d.",
         "Strange character '%c' after ##",
         "Strange character (%d.) after ##",
+        "__VA_OPT__ syntax error (right parenthesis needed)",
+        "__VA_OPT__ syntax error (unexpected end of string)",
+        "\"%s\" is not a parameter name.",
+        "Ellipsis must be the last in the parameter list.",
 
         "", /* Dummy, to visualize the border between errors and warnings */
         /*
