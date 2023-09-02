@@ -37,9 +37,10 @@
 #include <stdbool.h>
 
 
-struct fppTag {
-  int tag;
-  void *data;
+struct fppTag
+{
+    int tag;
+    void *data;
 };
 
 #define NFLAG_BUILTIN   1
