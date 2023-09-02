@@ -1,4 +1,5 @@
 /******************************************************************************
+Copyright (c) 2023 - present AinsleySnow
 Copyright (c) 1999 Daniel Stenberg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

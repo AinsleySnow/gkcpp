@@ -1,31 +1,25 @@
 /******************************************************************************
- *                               FREXXWARE
- * ----------------------------------------------------------------------------
- *
- * Project: Frexx C Preprocessor
- * $Source: /home/user/start/cpp/RCS/cpp.h,v $
- * $Revision: 1.3 $
- * $Date: 1993/12/06 13:51:20 $
- * $Author: start $
- * $State: Exp $
- * $Locker: start $
- *
- * ----------------------------------------------------------------------------
- * $Log: cpp.h,v $
- * Revision 1.3  1993/12/06  13:51:20  start
- * A lot of new stuff (too much to mention)
- *
- * Revision 1.2  1993/11/11  07:16:39  start
- * New stuff
- *
- * Revision 1.2  1993/11/11  07:16:39  start
- * New stuff
- *
- * Revision 1.1  1993/11/03  09:15:59  start
- * Initial revision
- *
- *
- *****************************************************************************/
+Copyright (c) 2023 - present AinsleySnow
+Copyright (c) 1993 - 2011 Daniel Stenberg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+******************************************************************************/
 
 /*
  *	I n t e r n a l   D e f i n i t i o n s    f o r   C P P
