@@ -483,7 +483,8 @@ ReturnCode cppmain(struct Global *global)
                 }
                 define--; /* decrease function probability */
 
-                Putchar(global, c); /* Just output it       */
+                if (c != TOK_SEP)       /* Avoid outputing bits for '##' */
+                    Putchar(global, c); /* Just output it       */
                 break;
             } /* Switch ends          */
             prev = type[c];

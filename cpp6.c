@@ -258,13 +258,26 @@ int catenate(struct Global *global, ReturnCode *ret)
             if (*ret)
                 return (false);
             break;
-        default: /* An error, ...        */
-            if (isprint(c))
-                cerror(global, ERROR_STRANG_CHARACTER, c);
-            else
-                cerror(global, ERROR_STRANG_CHARACTER2, c);
-            strcpy(global->work, token1);
-            unget(global);
+        default:
+        /* In the original version of frexcpp, other characters should
+         * not appear here. I removed the restriction and allowed any
+         * printable character to follow '##'. However, the occurrence
+         * of a non-printable character is still considered an error.
+         */
+            if (!isprint(c))
+            {
+                cerror(global, ERROR_STRANGE_CHARACTER, c);
+                strcpy(global->work, token1);
+                unget(global);
+                break;
+            }
+            if ((int)strlen(token1) + 1 >= NWORK)
+            {
+                cfatal(global, FATAL_WORK_AREA_OVERFLOW, token1);
+                *ret = FPP_WORK_AREA_OVERFLOW;
+                return (false);
+            }
+            sprintf(global->work, "%s%c", token1, c);
             break;
         }
         /*
@@ -1112,8 +1125,7 @@ void domsg(struct Global *global,
         "illegal character (%d decimal) in #if",
         "#if ... sizeof: bug, unknown type code 0x%x",
         "#if bug, operand = %d.",
-        "Strange character '%c' after ##",
-        "Strange character (%d.) after ##",
+        "Strange non-printable character (%d.) after ##",
         "__VA_OPT__ syntax error (right parenthesis needed)",
         "__VA_OPT__ syntax error (unexpected end of string)",
         "\"%s\" is not a parameter name.",
