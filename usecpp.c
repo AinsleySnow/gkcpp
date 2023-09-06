@@ -62,25 +62,6 @@ int main(int argc, char **argv)
     struct fppTag *tagptr = tags;
     char *dealloc;
 
-    /*
-     * Append system-specific directories to the include directory list.
-     * The include directories will be searched through in the same order
-     * as you add them in the taglist!
-     * The directory _must_ end with a proper directory speparator!
-     */
-
-    tagptr->tag = FPPTAG_INCLUDE_DIR;
-    tagptr->data = "/usr/include/";
-    tagptr++;
-
-    tagptr->tag = FPPTAG_INCLUDE_DIR;
-    tagptr->data = "/usr/include/linux";
-    tagptr++;
-
-    tagptr->tag = FPPTAG_INCLUDE_DIR;
-    tagptr->data = "/usr/include/x86_64-linux-gnu";
-    tagptr++;
-
     if (GetPrefs(&tagptr, &dealloc))
         return (0);
 

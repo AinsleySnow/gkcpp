@@ -275,6 +275,19 @@ int dooptions(struct Global *global, struct fppTag *tags)
         }
         tags++;
     }
+
+    /*
+     * Append system-specific directories to the include directory list.
+     * The include directories will be searched through in the same order
+     * as you add them here!
+     * The directory _must_ end with a proper directory speparator!
+     * We add system-specific directories here to make sure user-add
+     * directories is searched first!
+     */
+    *global->incend++ = "/usr/include/";
+    *global->incend++ = "/usr/include/linux";
+    *global->incend++ = "/usr/include/x86_64-linux-gnu";
+
     return (0);
 }
 
