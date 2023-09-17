@@ -329,7 +329,11 @@ ReturnCode initdefines(struct Global *global)
                 dp = defendel(global, *pp, false);
                 if (!dp)
                     return (FPP_OUT_OF_MEMORY);
-                dp->repl = savestring(global, "1");
+                int i = pp - global->preset;
+                if (global->presetval[i])
+                    dp->repl = savestring(global, global->presetval[i]);
+                else
+                    dp->repl = savestring(global, "1");
                 dp->nargs = DEF_NOARGS;
             }
         }

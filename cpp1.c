@@ -61,6 +61,9 @@ int fppPreProcess(struct fppTag *tags)
     global->ifptr = global->ifstack;
     global->incend = global->incdir;
 
+    for (int i = 0; i < 30; ++i)
+        global->presetval[i] = NULL;
+
     /* names defined at cpp start */
     global->preset[0] = "gkcpp"; /* This is the Ginkgo cpp program */
 
@@ -78,7 +81,19 @@ int fppPreProcess(struct fppTag *tags)
     global->preset[11] = "__LP64__";
     global->preset[12] = "_LP64";
     global->preset[13] = "__ELF__";
-    global->preset[14] = NULL;
+    global->preset[14] = "__STDC__";
+    global->preset[15] = "__STDC_EMBD_NOT_FOUND__"; // 0
+    global->preset[16] = "__STDC_EMBED_FOUND__"; // 1
+    global->preset[17] = "__STDC_EMBED_EMPTY__"; // 2
+    global->preset[18] = "__STDC_HOSTED__";
+    global->preset[19] = "__STDC_UTF_16__";
+    global->preset[20] = "__STDC_UTF_32__";
+    global->preset[21] = "__STDC_VERSION__"; // 202311L
+    global->preset[22] = NULL;
+
+    global->presetval[15] = "0";
+    global->presetval[17] = "2";
+    global->presetval[21] = "202311L";
 
     /* Note: order is important   */
     global->magic[0] = "__LINE__";
