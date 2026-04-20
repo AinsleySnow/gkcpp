@@ -161,7 +161,7 @@ struct Global
      * The -B option supresses preset definitions.
      */
     char *preset[30];       /* names defined at cpp start   */
-    char *presetval[30];  /* values correspond to the preset macros */
+    char *presetval[30];  /* values correspond to the preset macros; default: "1" */
 
     /*
      * The value of these predefined symbols must be recomputed whenever
