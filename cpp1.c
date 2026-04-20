@@ -89,7 +89,8 @@ int fppPreProcess(struct fppTag *tags)
     global->preset[19] = "__STDC_UTF_16__";
     global->preset[20] = "__STDC_UTF_32__";
     global->preset[21] = "__STDC_VERSION__"; // 202311L
-    global->preset[22] = NULL;
+    global->preset[22] = "__GINKGO__";
+    global->preset[23] = NULL;
 
     global->presetval[15] = "0";
     global->presetval[17] = "2";
